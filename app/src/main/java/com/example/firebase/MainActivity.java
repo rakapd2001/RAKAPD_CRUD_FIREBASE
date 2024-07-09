@@ -3,8 +3,11 @@ package com.example.firebase;
 import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.app.ProgressDialog;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -19,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -34,6 +38,29 @@ public class MainActivity extends AppCompatActivity {
     private List<ItemList> itemList;
     private MyAdapter myAdapter;
 
+    private FirebaseAuth mAuth;
+
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item){
+        int id = item.getItemId();
+
+        if(id == R.id.action_logout){
+            mAuth.signOut();
+            Toast.makeText(MainActivity.this, "Logged out success", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this,DefaultActivity.class);
+            startActivity(intent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         // initialize Firebase
         FirebaseApp.initializeApp(this);
         db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         // initialize UI components
         recyclerView = findViewById(R.id.rcvLibrary);
